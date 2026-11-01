@@ -1,0 +1,190 @@
+{
+  "services": [
+    {
+      "id": "web-dev",
+      "title": "Website Development",
+      "description": "Custom, ultra-fast, mobile-optimized business websites and web applications built to turn visitors into paying customers.",
+      "iconName": "Code",
+      "badge": "High Converting",
+      "features": ["Custom React / Next.js Architecture", "100% Mobile & Tablet Responsive", "Fast Loading Speed (< 1.5s)", "Integrated Lead Forms & CRM"]
+    },
+    {
+      "id": "landing-page",
+      "title": "Landing Page Design",
+      "description": "High-impact, high-converting landing pages specifically designed for Google & Meta ad campaign conversion optimization.",
+      "iconName": "Layout",
+      "badge": "Top ROAS",
+      "features": ["Conversion-Focused UX Copywriting", "A/B Testing Ready", "Instant Load Time Optimization", "Lead Capture Integration"]
+    },
+    {
+      "id": "seo",
+      "title": "Search Engine Optimization",
+      "description": "Rank #1 on Google for high-intent keywords in your local market (Gorakhpur, Khalilabad, Basti) to drive predictable organic revenue.",
+      "iconName": "Search",
+      "badge": "Organic Growth",
+      "features": ["Technical SEO & Schema Audits", "On-Page Keyword Optimization", "High Authority Backlink Building", "Google Business Profile Local SEO"]
+    },
+    {
+      "id": "meta-ads",
+      "title": "Meta Ads Management",
+      "description": "Highly targeted Facebook & Instagram ad campaigns by Vishal Jaiswal (4+ yrs exp) that generate high-quality WhatsApp leads.",
+      "iconName": "Megaphone",
+      "badge": "4.8x Avg ROAS",
+      "features": ["Audience Targeting & Retargeting", "Ad Creative & Video Scripting", "Conversion API Setup", "Daily Budget & Bid Tuning"]
+    },
+    {
+      "id": "google-ads",
+      "title": "Google Ads (PPC)",
+      "description": "Capture high-intent buyers searching for your exact services on Google Search, Maps, and YouTube.",
+      "iconName": "MousePointerClick",
+      "badge": "Instant Traffic",
+      "features": ["Search & Display Campaigns", "Negative Keyword Filtering", "Quality Score Optimization", "Call & Lead Extension Tracking"]
+    },
+    {
+      "id": "smm",
+      "title": "Social Media Marketing",
+      "description": "Build an authoritative, recognizable brand presence across Instagram, Facebook, and LinkedIn with viral content.",
+      "iconName": "Share2",
+      "badge": "Brand Building",
+      "features": ["Custom Content Calendar Design", "Reels & Short Video Scripting", "Community Engagement", "Monthly Analytics Reporting"]
+    }
+  ],
+  "portfolio": [
+    {
+      "id": "proj-1",
+      "title": "Apex Realty Group Gorakhpur",
+      "client": "Apex Real Estate Ltd.",
+      "category": "Real Estate & Lead Gen",
+      "technologies": ["Next.js 15", "Meta Ads", "Google Ads", "Tailwind CSS"],
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+      "results": "+420 High-Intent Luxury Villa Enquiries in 30 Days",
+      "description": "Designed a high-end luxury property showcase platform coupled with targeted Facebook & Instagram lead ads for Gorakhpur market.",
+      "liveUrl": "#contact"
+    },
+    {
+      "id": "proj-2",
+      "title": "Dr. Sharma Dental SuperSpecialty",
+      "client": "Dr. Sharma Dental Clinics",
+      "category": "Doctors & Healthcare",
+      "technologies": ["React", "Local SEO", "WhatsApp API", "Meta Ads"],
+      "image": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80",
+      "results": "180+ Monthly New Patient Appointments Booked",
+      "description": "Complete digital transformation for a multi-specialty dental clinic.",
+      "liveUrl": "#contact"
+    },
+    {
+      "id": "proj-3",
+      "title": "Zenith Interior Studios Khalilabad",
+      "client": "Zenith Design & Infra",
+      "category": "Interior Designers",
+      "technologies": ["Next.js", "Instagram Ads", "Branding", "Framer Motion"],
+      "image": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80",
+      "results": "5.4x ROAS on Premium Interior Consultation Campaign",
+      "description": "Visual portfolio site showcasing 3D architectural renders paired with hyper-targeted Instagram Video Reels ads.",
+      "liveUrl": "#contact"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "test-1",
+      "name": "Vikramaditya Singh",
+      "business": "Apex Realty Gorakhpur",
+      "role": "Managing Director",
+      "image": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+      "rating": 5,
+      "review": "Vishal Jaiswal completely transformed our lead generation in Gorakhpur. Within 30 days of launching Meta Ads, we received over 400 verified inquiries!",
+      "growthMetric": "+420 High Intent Leads"
+    },
+    {
+      "id": "test-2",
+      "name": "Dr. Ananya Sharma",
+      "business": "Sharma Dental Clinics",
+      "role": "Founder & Chief Surgeon",
+      "image": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=200&q=80",
+      "rating": 5,
+      "review": "Vishal Media Tech keeps our patient appointment calendar booked 3 weeks in advance through Meta Ads and WhatsApp automation.",
+      "growthMetric": "180+ Appointments / Mo"
+    }
+  ],
+  "faqs": [
+    {
+      "question": "What digital marketing services does Vishal Media Tech offer?",
+      "answer": "We offer full-suite digital growth solutions including Custom Website Development, Landing Page Design, Meta Ads (Facebook & Instagram), Google Ads (PPC), Search Engine Optimization (SEO), Social Media Management, Branding, WhatsApp Business API Automation, and AI Customer Chatbots.",
+      "category": "Services"
+    },
+    {
+      "question": "How long does it take to design and launch a new business website?",
+      "answer": "Our typical delivery timeline for a custom, high-converting business website or landing page is 7 to 14 days. We work in sprints so your business can start capturing leads as quickly as possible.",
+      "category": "Website Dev"
+    }
+  ],
+  "photos": [
+    {
+      "id": "ph-1",
+      "url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
+      "title": "Strategy Sprint Session",
+      "category": "Team Culture"
+    },
+    {
+      "id": "ph-2",
+      "url": "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80",
+      "title": "Client Campaign Review",
+      "category": "Meta Ads Planning"
+    },
+    {
+      "id": "ph-3",
+      "url": "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80",
+      "title": "UX & Web Engineering",
+      "category": "Development HQ"
+    }
+  ],
+  "videos": [
+    {
+      "id": "vid-1",
+      "youtubeId": "dQw4w9WgXcQ",
+      "title": "How Apex Realty Scaled to ₹4.5 Cr Sales via Meta Ads",
+      "client": "Apex Luxury Real Estate",
+      "thumbnail": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80",
+      "views": "18.4K views",
+      "duration": "4:25",
+      "category": "Real Estate Case Study"
+    },
+    {
+      "id": "vid-2",
+      "youtubeId": "L_LUpnjgPso",
+      "title": "Dental Clinic Marketing: 180+ Appointments / Mo System",
+      "client": "Dr. Sharma Dental Clinics",
+      "thumbnail": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80",
+      "views": "24.1K views",
+      "duration": "5:10",
+      "category": "Doctor Growth Guide"
+    }
+  ],
+  "leads": [],
+  "customers": [],
+  "transactions": [],
+  "earnings": [],
+  "expenses": [],
+  "earningCategories": [
+    "Meta Ads Retainer",
+    "Website Development",
+    "SEO & Content",
+    "Brand Strategy",
+    "Consulting",
+    "Personal Income / Freelancing",
+    "Other"
+  ],
+  "expenseCategories": [
+    "Personal Expenses",
+    "Software & AI Tools",
+    "Freelancer & Team",
+    "Office & Rent",
+    "Travel & Fuel",
+    "Food & Dining",
+    "Equipment & Gear",
+    "Marketing & Ads",
+    "Family & Household",
+    "Other"
+  ],
+  "lastUpdated": "2026-10-20T16:00:00.000Z"
+}
