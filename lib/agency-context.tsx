@@ -417,6 +417,10 @@ export function AgencyProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => { expensesRef.current = expenses; }, [expenses]);
   useEffect(() => { leadsRef.current = leads; }, [leads]);
 
+  const isLoggedInRef = useRef<boolean>(isLoggedIn);
+  useEffect(() => { isLoggedInRef.current = isLoggedIn; }, [isLoggedIn]);
+  const lastFetchTimeRef = useRef<number>(0);
+
   // Persistent Zero-Loss Safety Vault Keys
   const SAFETY_VAULT_KEY = "vmt_safety_vault_v2";
   const DELETED_KEYS_PREFIX = "vmt_deleted_";
@@ -587,18 +591,29 @@ export function AgencyProvider({ children }: { children: React.ReactNode }) {
   ]);
 
   // Fetch the latest cloud data with Anti-Wipe Protection and Smart-Merge
-  const fetchCloudData = useCallback(async (isBackground: boolean = false) => {
+  const fetchCloudData = useCallback(async (isBackground: boolean = false, isForce: boolean = false) => {
     // If a local mutation was made less than 4 seconds ago, skip background fetch to avoid racing
     if (Date.now() - lastLocalMutationTimeRef.current < 4000) {
       return;
     }
 
+    // Rate-limiting throttle: skip repetitive fetches within 10 seconds unless explicitly forced
+    const now = Date.now();
+    if (!isForce && now - lastFetchTimeRef.current < 10000) {
+      return;
+    }
+    lastFetchTimeRef.current = now;
+
     try {
       if (!isBackground) setSyncStatus("syncing");
 
-      const res = await fetch(`/api/agency/sync?t=${Date.now()}`, {
-        cache: "no-store",
-        headers: { "Cache-Control": "no-cache, no-store, must-revalidate" }
+      // For admin / forced refresh, bust cache; for normal visitors, use edge-cached endpoint
+      const shouldBustCache = isForce || isLoggedInRef.current;
+      const url = shouldBustCache ? `/api/agency/sync?force=true&t=${now}` : `/api/agency/sync`;
+
+      const res = await fetch(url, {
+        cache: shouldBustCache ? "no-store" : "default",
+        headers: shouldBustCache ? { "Cache-Control": "no-cache, no-store, must-revalidate" } : undefined
       });
 
       if (res.ok) {
@@ -621,10 +636,11 @@ export function AgencyProvider({ children }: { children: React.ReactNode }) {
           // ANTI-WIPE GUARD:
           // If cloud has 0 records, but local has records (e.g. serverless cold start):
           // NEVER wipe local records! Instead, heal the cloud by pushing local data!
+          // Strictly restricted to authenticated admin sessions to prevent anonymous visitors from pushing
           const hasLocalRecords = currentCust.length > 0 || currentTx.length > 0 || currentEarn.length > 0 || currentExp.length > 0;
           const isCloudEmpty = cloudCust.length === 0 && cloudTx.length === 0 && cloudEarn.length === 0 && cloudExp.length === 0;
 
-          if (hasLocalRecords && (isCloudEmpty || json.isFreshBaseline)) {
+          if (isLoggedInRef.current && hasLocalRecords && (isCloudEmpty || json.isFreshBaseline)) {
             console.log("Anti-Wipe Guard: Preserving local records and healing cloud database!");
             await pushStateToCloud({
               ...cloud,
@@ -861,17 +877,26 @@ export function AgencyProvider({ children }: { children: React.ReactNode }) {
       setAuthLoading(false);
     }
 
-    // Immediately fetch global cloud data
-    fetchCloudData(false);
+    // Fetch global cloud data once on initial mount
+    fetchCloudData(false, false);
+  }, [fetchCloudData]);
 
-    // Multi-device real-time sync: poll every 12 seconds in background
+  // Multi-device real-time sync: Gentle polling ONLY for authenticated admin sessions
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    // Check every 90 seconds in background ONLY if tab is currently visible
     const pollInterval = setInterval(() => {
-      fetchCloudData(true);
-    }, 12000);
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        fetchCloudData(true, false);
+      }
+    }, 90000);
 
-    // Window focus listener: when user opens/switches to this tab on phone/laptop, pull latest data instantly
+    // Tab focus listener: When admin returns to tab, pull fresh data if >30s since last fetch
     const handleFocus = () => {
-      fetchCloudData(false);
+      if (Date.now() - lastFetchTimeRef.current > 30000) {
+        fetchCloudData(false, false);
+      }
     };
     window.addEventListener("focus", handleFocus);
 
@@ -879,7 +904,7 @@ export function AgencyProvider({ children }: { children: React.ReactNode }) {
       clearInterval(pollInterval);
       window.removeEventListener("focus", handleFocus);
     };
-  }, [fetchCloudData]);
+  }, [isLoggedIn, fetchCloudData]);
 
   // Zero-Loss Recovery Actions
   const restoreFromSafetyVault = (): boolean => {
@@ -951,7 +976,7 @@ export function AgencyProvider({ children }: { children: React.ReactNode }) {
         document.cookie = "vmt_auth=true; path=/; max-age=2592000; SameSite=Lax";
       } catch (e) {}
       // When admin logs in, pull absolute latest cloud data
-      fetchCloudData(false);
+      fetchCloudData(false, true);
       return true;
     }
     return false;
@@ -1099,7 +1124,7 @@ export function AgencyProvider({ children }: { children: React.ReactNode }) {
 
   // Manual Trigger for UI "Sync Now" button
   const syncNow = async () => {
-    await fetchCloudData(false);
+    await fetchCloudData(false, true);
   };
 
   // Helper for applying mutations and broadcasting to Cloud

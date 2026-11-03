@@ -52,37 +52,59 @@ async function setUpstashData(payload: any): Promise<boolean> {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const isForce = searchParams.get("force") === "true";
+
+    const cacheHeaders = isForce
+      ? {
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+          "CDN-Cache-Control": "no-store",
+          "Vercel-CDN-Cache-Control": "no-store"
+        }
+      : {
+          "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+          "CDN-Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+          "Vercel-CDN-Cache-Control": "public, s-maxage=30, stale-while-revalidate=60"
+        };
+
     // 1. Check Upstash / KV persistent database if configured
     const upstashCloud = await getUpstashData();
     if (upstashCloud && upstashCloud.lastUpdated) {
       memoryCache = upstashCloud;
-      return NextResponse.json({
-        success: true,
-        source: "upstash_kv_database",
-        isPersistent: true,
-        data: upstashCloud,
-        lastUpdated: upstashCloud.lastUpdated
-      });
+      return NextResponse.json(
+        {
+          success: true,
+          source: "upstash_kv_database",
+          isPersistent: true,
+          data: upstashCloud,
+          lastUpdated: upstashCloud.lastUpdated
+        },
+        { headers: cacheHeaders }
+      );
     }
 
     // 2. Return memory cache if available (fastest for active instances)
     if (memoryCache && memoryCache.lastUpdated) {
-      return NextResponse.json({
-        success: true,
-        source: "memory_cache",
-        isPersistent: true,
-        data: memoryCache,
-        lastUpdated: memoryCache.lastUpdated || lastCacheUpdate
-      });
+      return NextResponse.json(
+        {
+          success: true,
+          source: "memory_cache",
+          isPersistent: true,
+          data: memoryCache,
+          lastUpdated: memoryCache.lastUpdated || lastCacheUpdate
+        },
+        { headers: cacheHeaders }
+      );
     }
 
     // 3. Direct fetch from public Blob CDN
     try {
-      const directRes = await fetch(`${DIRECT_BLOB_URL}?t=${Date.now()}`, {
-        cache: "no-store",
-        headers: { "Cache-Control": "no-cache, no-store, must-revalidate" }
+      const blobUrl = isForce ? `${DIRECT_BLOB_URL}?t=${Date.now()}` : DIRECT_BLOB_URL;
+      const directRes = await fetch(blobUrl, {
+        cache: isForce ? "no-store" : "default",
+        headers: isForce ? { "Cache-Control": "no-cache, no-store, must-revalidate" } : undefined
       });
 
       if (directRes.ok) {
@@ -90,13 +112,16 @@ export async function GET() {
         if (cloudData && typeof cloudData === "object") {
           // Never blindly overwrite with empty seed!
           memoryCache = cloudData;
-          return NextResponse.json({
-            success: true,
-            source: "vercel_blob_cdn",
-            isPersistent: true,
-            data: cloudData,
-            lastUpdated: cloudData.lastUpdated
-          });
+          return NextResponse.json(
+            {
+              success: true,
+              source: "vercel_blob_cdn",
+              isPersistent: true,
+              data: cloudData,
+              lastUpdated: cloudData.lastUpdated
+            },
+            { headers: cacheHeaders }
+          );
         }
       }
     } catch (directErr) {
@@ -109,22 +134,26 @@ export async function GET() {
       const targetBlob = blobs.find((b) => b.pathname === BLOB_FILENAME) || blobs[0];
 
       if (targetBlob && targetBlob.url) {
-        const res = await fetch(`${targetBlob.url}?t=${Date.now()}`, {
-          cache: "no-store",
-          headers: { "Cache-Control": "no-cache, no-store, must-revalidate" }
+        const targetUrl = isForce ? `${targetBlob.url}?t=${Date.now()}` : targetBlob.url;
+        const res = await fetch(targetUrl, {
+          cache: isForce ? "no-store" : "default",
+          headers: isForce ? { "Cache-Control": "no-cache, no-store, must-revalidate" } : undefined
         });
 
         if (res.ok) {
           const cloudData = await res.json();
           if (cloudData && typeof cloudData === "object") {
             memoryCache = cloudData;
-            return NextResponse.json({
-              success: true,
-              source: "vercel_blob_api",
-              isPersistent: true,
-              data: cloudData,
-              lastUpdated: cloudData.lastUpdated || targetBlob.uploadedAt
-            });
+            return NextResponse.json(
+              {
+                success: true,
+                source: "vercel_blob_api",
+                isPersistent: true,
+                data: cloudData,
+                lastUpdated: cloudData.lastUpdated || targetBlob.uploadedAt
+              },
+              { headers: cacheHeaders }
+            );
           }
         }
       }
@@ -134,14 +163,17 @@ export async function GET() {
 
     // 5. Initial / Fresh Server Baseline:
     // Mark with isFreshBaseline: true so client knows this is empty default and NEVER wipes existing client data!
-    return NextResponse.json({
-      success: true,
-      source: "agency_seed",
-      isFreshBaseline: true,
-      isPersistent: false,
-      data: agencySeed,
-      lastUpdated: agencySeed.lastUpdated
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        source: "agency_seed",
+        isFreshBaseline: true,
+        isPersistent: false,
+        data: agencySeed,
+        lastUpdated: agencySeed.lastUpdated
+      },
+      { headers: cacheHeaders }
+    );
   } catch (error: any) {
     console.error("GET /api/agency/sync error:", error);
     return NextResponse.json(
